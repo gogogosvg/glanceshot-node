@@ -1,5 +1,7 @@
 # Glanceshot for Node.js
 
+[Website](https://glanceshot.com) · [API docs](https://glanceshot.com/docs) · [Pricing](https://glanceshot.com/pricing) · [Use cases](https://glanceshot.com/use-cases) · [Try it online](https://glanceshot.com/#try) · [Get a free API key](https://glanceshot.com/register)
+
 Official SDK for the [Glanceshot](https://glanceshot.com) website screenshot API: turn any URL or HTML into a PNG, JPEG or WebP screenshot or a PDF. Chinese, Japanese and Korean text renders correctly, ads, cookie banners and pop-ups are removed by default, and you only pay for successful renders.
 
 - Zero dependencies, about 8 KB
@@ -10,7 +12,7 @@ Official SDK for the [Glanceshot](https://glanceshot.com) website screenshot API
 npm install glanceshot
 ```
 
-Get a free API key (100 screenshots a month) at [glanceshot.com](https://glanceshot.com/register).
+Get a free API key (100 screenshots a month) at [glanceshot.com](https://glanceshot.com/register), or [try a screenshot in your browser](https://glanceshot.com/#try) first, no sign-up needed.
 
 ## Quick start
 
@@ -57,7 +59,7 @@ const file = await glanceshot.screenshotUrl({ url: "https://example.com" });
 console.log(file.url, file.width, file.height, file.cacheHit);
 ```
 
-Options use the same names as the [HTTP API](https://glanceshot.com/docs) in camelCase (`full_page` → `fullPage`, `wait_for_selector` → `waitForSelector`, …).
+Options use the same names as the [HTTP API](https://glanceshot.com/docs#screenshot) in camelCase (`full_page` → `fullPage`, `wait_for_selector` → `waitForSelector`, …).
 
 ## PDFs
 
@@ -88,17 +90,44 @@ const src = await glanceshot.signedUrl({
 // <img src={src} alt="Preview of example.com">
 ```
 
-Use `type: "pdf"` for a PDF link.
+Use `type: "pdf"` for a PDF link. See [signed URLs](https://glanceshot.com/docs#signed-url) in the API docs.
 
 ## Pages behind a login
 
-Install the Glanceshot browser extension, save your login on the site as a login profile with one click, then pass its ID:
+Screenshot dashboards, admin panels, reports and other pages that need you to be signed in, using a **login profile**:
+
+1. Sign in to the [Glanceshot console](https://glanceshot.com/dashboard), open [Login profiles](https://glanceshot.com/dashboard/profiles), install the Glanceshot browser extension (Chrome or Edge) and click **Connect extension**.
+2. Open the website you want to capture in the same browser and sign in as usual.
+3. Click the Glanceshot icon in the toolbar and choose **Save login profile**. The profile appears in the console with its ID (`lp_…`).
+4. Pass the ID with your calls:
 
 ```js
 await glanceshot.screenshot({ url: "https://app.example.com/dashboard", loginProfile: "lp_8f2c…" });
+
+// Works in batches too, e.g. a nightly snapshot of every report page
+await glanceshot.batches.create({
+  urls: ["https://app.example.com/reports/sales", "https://app.example.com/reports/traffic"],
+  options: { loginProfile: "lp_8f2c…", fullPage: true },
+});
 ```
 
-If the login no longer works the call fails with `login_expired` and is not billed. Login profiles can't be used in signed URLs.
+- Login profiles are stored encrypted, can't be read back, and are only sent to the site they belong to.
+- Turn on auto-sync in the extension to keep a profile fresh while you stay signed in.
+- If the login no longer works the call fails with `login_expired` and is not billed. Sign in again and save the profile again.
+- Some sites only accept a login on your own computer. For those, open the page and use **Capture and upload** in the extension instead.
+- Login profiles can't be used in signed URLs.
+
+Details: [Pages behind a login](https://glanceshot.com/docs#login) in the API docs.
+
+## Your own proxy
+
+To see a page as visitors from a specific country do, route the render through a proxy you own (SOCKS5 or HTTP, with or without a password). Server-side calls only:
+
+```js
+await glanceshot.screenshot({ url: "https://shop.example.com", proxy: "socks5://user:pass@203.0.113.10:1080" });
+```
+
+Proxies can't be used in signed URLs or batches. See [using a proxy](https://glanceshot.com/docs#proxy).
 
 ## Batches and webhooks
 
@@ -124,7 +153,7 @@ if (!ok) return res.sendStatus(401);
 const event = JSON.parse(req.body); // { event: "batch.completed", batch: {...} }
 ```
 
-Webhooks may be delivered more than once; de-duplicate by `batch.id`.
+Webhooks may be delivered more than once; de-duplicate by `batch.id`. See [batches](https://glanceshot.com/docs#batch) and [webhooks](https://glanceshot.com/docs#webhook) in the API docs.
 
 ## Usage
 
@@ -132,6 +161,8 @@ Webhooks may be delivered more than once; de-duplicate by `batch.id`.
 const usage = await glanceshot.usage();
 console.log(`${usage.used} / ${usage.limit} this month`);
 ```
+
+Plans and limits: [pricing](https://glanceshot.com/pricing) and [rate limits](https://glanceshot.com/docs#limits).
 
 ## Errors
 
@@ -161,6 +192,14 @@ Failed renders (timeouts, sites returning errors, bot-check pages) are never bil
 | `baseUrl` | `https://glanceshot.com` | |
 | `timeoutMs` | `60000` | Per request. |
 | `fetch` | global `fetch` | Custom implementation. |
+
+## Links
+
+- [Glanceshot](https://glanceshot.com): website screenshot API
+- [API documentation](https://glanceshot.com/docs)
+- [Use cases](https://glanceshot.com/use-cases): link previews, archiving, monitoring, reports and more
+- [Pricing](https://glanceshot.com/pricing)
+- Support: [support@glanceshot.com](mailto:support@glanceshot.com)
 
 ## License
 
