@@ -1,0 +1,60 @@
+{
+  "name": "glanceshot",
+  "version": "0.1.0",
+  "description": "Official Node.js SDK for the Glanceshot website screenshot API: screenshots, PDFs, signed image URLs, batches and webhooks.",
+  "keywords": [
+    "screenshot",
+    "screenshot-api",
+    "website-screenshot",
+    "html-to-pdf",
+    "pdf",
+    "thumbnail",
+    "puppeteer-alternative",
+    "glanceshot"
+  ],
+  "homepage": "https://glanceshot.com/docs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gogogosvg/glanceshot-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gogogosvg/glanceshot-node/issues",
+    "email": "support@glanceshot.com"
+  },
+  "license": "MIT",
+  "author": "Changsha Shufen Information Technology Co., Ltd. <support@glanceshot.com>",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/unit.test.ts",
+    "test:integration": "node --test test/integration.test.ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.0"
+  }
+}
